@@ -16,3 +16,24 @@ rlPx4Controller is developed for DRL simulation flight control. The attributes i
 - pyParallelControl：Multi-aircraft controller for reinforcement learning in vectorized environments.
 
 For usage and more details, please refer to the [documentation](https://rlpx4controller.readthedocs.io/).
+
+
+## Installation 
+This project was tested on Ubuntu 2004. Generally, you can successfully install it by executing the following command
+```bash
+sudo apt install libeigen3-dev
+```
+Its function is to install `Eigen==3.3.7` to expose the python interface.
+
+If you are using Ubuntu 2204, executing the above command usually cannot install the specified version of Eigen, but it can still be used. If you use the conda environment, you only need to execute the following command:
+```bash
+conda install -c conda-forge eigen==3.3.7
+```
+It can be installed and used normally
+
+Then execute:
+
+```bash
+pip install -e .
+bash stubgen.sh
+```

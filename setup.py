@@ -2,7 +2,7 @@
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 from setuptools import setup,find_packages
 import subprocess
-
+import os
 __version__ = "0.0.2"
 
 # The main interface is through Pybind11Extension.
@@ -14,6 +14,23 @@ __version__ = "0.0.2"
 #   Sort input source files if you glob sources to ensure bit-for-bit
 #   reproducible builds (https://github.com/pybind/python_example/pull/53)
 
+# Dynamic detection of the path of Eigen3
+def get_eigen_include():
+    conda_prefix = os.environ.get('CONDA_PREFIX')
+    if conda_prefix:
+        # Use Conda
+        conda_eigen = os.path.join(conda_prefix, 'include', 'eigen3')
+        if os.path.exists(conda_eigen):
+            print(f"Using Conda Eigen: {conda_eigen}")
+            return conda_eigen
+    
+    # if Conda not has eigen, back to system
+    system_eigen = "/usr/include/eigen3"
+    print(f"Using System Eigen: {system_eigen}")
+    return system_eigen
+
+eigen_include = get_eigen_include()
+
 ext_modules = [
     # annotate this part if eigen version higher than 3.3.7
     Pybind11Extension(
@@ -21,7 +38,7 @@ ext_modules = [
         ["bind/polyTrajGen.cpp","src/polynomial_traj.cpp"],
         # Example: passing in the version to the compiled code
         define_macros=[("VERSION_INFO", __version__)],
-        include_dirs=["include","/usr/include/eigen3"],
+        include_dirs=["include", eigen_include],  # use detect path
 
     ),
 
@@ -31,14 +48,14 @@ ext_modules = [
         ["bind/pyControl.cpp"],
         # Example: passing in the version to the compiled code
         define_macros=[("VERSION_INFO", __version__)],
-        include_dirs=["include","/usr/include/eigen3"],
+        include_dirs=["include", eigen_include],
     ),
     Pybind11Extension(
         "rlPx4Controller.pyParallelControl",
         ["bind/pyParallelControl.cpp"],
         # Example: passing in the version to the compiled code
         define_macros=[("VERSION_INFO", __version__)],
-        include_dirs=["include","/usr/include/eigen3"],
+        include_dirs=["include", eigen_include],
 
     ),
 ]
